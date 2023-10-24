@@ -46,10 +46,54 @@ def get_BitCoin_Price():
         cursor.execute(statement, values)
         comp.commit()
         cursor.close()
-        comp.close()
+
 
     else:
         print(f"Request failed with status code: {request.status_code}")
 
 
+def get_Ethereum_Price():
+    # source the crypto values are pulling from
+    source = "https://api.coingecko.com/api/v3/simple/price"
+
+    parameters = {
+        "ids": "ethereum",
+        "vs_currencies": "usd"
+    }
+
+    request = requests.get(source, params=parameters)
+
+    # 200 means source was valid
+    if request.status_code == 200:
+        # Parse the JSON response
+        data = request.json()
+        ethereum_price_usd = data['ethereum']['usd']
+        print(f"Ethereum Price (USD): ${ethereum_price_usd}")
+
+        ethereum_price = float(ethereum_price_usd)
+        cursor = comp.cursor()
+        timeStamp = datetime.now()  # date along with time retrieved
+
+        hour = timeStamp.hour
+        second = timeStamp.hour
+        month = timeStamp.month
+        day = timeStamp.day
+        min = timeStamp.minute
+        year = timeStamp.year
+
+        statement = "INSERT INTO ethereum (Month, Day, year, Hour, Min, Second, Price) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+        values = (month, day, year, hour, min, second, ethereum_price)
+        cursor.execute(statement, values)
+        comp.commit()
+        cursor.close()
+        comp.close()
+
+
+    else:
+        print(f"Request failed with status code: {request.status_code}")
+
+
+
+
 get_BitCoin_Price()
+get_Ethereum_Price()
