@@ -1,6 +1,7 @@
 import requests
 import mysql.connector
 from datetime import datetime
+import matplotlib.pyplot as plt
 
 # local database config, this is different for everyone due to local preferences
 comp = mysql.connector.connect(
@@ -99,8 +100,49 @@ def get_Ethereum_Price():
     except Exception as e:
         print(f"An error occurred: {e}")
 
+def plotData():
+    conn = mysql.connector.connect(comp)
+
+    # Create a cursor
+    cursor = conn.cursor()
+
+    # Write an SQL query to select the data
+    sql_query = "SELECT month, day, hour, minute, second, price FROM crypto_data"
+
+    # Execute the query
+    cursor.execute(sql_query)
+
+    # Fetch the data
+    data = cursor.fetchall()
+
+    # Close the cursor and connection
+    cursor.close()
+    conn.close()
+
+    # Extract data for plotting
+    timestamps = []
+    prices = []
+
+    for row in data:
+        month, day, hour, minute, second, price = row
+        timestamp = f"{month}/{day} {hour}:{minute}:{second}"
+        timestamps.append(timestamp)
+        prices.append(price)
+
+    # Create a line plot
+    plt.figure(figsize=(12, 6))
+    plt.plot(timestamps, prices, marker='o')
+    plt.title("Crypto Price Over Time")
+    plt.xlabel("Timestamp")
+    plt.ylabel("Price (USD)")
+    plt.xticks(rotation=45)  # Rotate x-axis labels for readability
+
+    # Display the plot
+    plt.tight_layout()
+    plt.show()
 
 
 
 get_BitCoin_Price()
 get_Ethereum_Price()
+#plotData()
