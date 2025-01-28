@@ -14,6 +14,7 @@ comp = mysql.connector.connect(
 
 
 def get_BitCoin_Price():
+    print("Hello World")
     try:
         # source the crypto values are pulling from
         source = "https://api.coingecko.com/api/v3/simple/price"
